@@ -15,7 +15,7 @@ app.use(express.json());
 
 
 app.use((request, response, next) => {
-  console.log('Hello from the middleware!')
+  // console.log('Hello from the middleware!')
   // NEVER FORGET TO USE NEXT
   next();
 })

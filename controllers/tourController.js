@@ -3,6 +3,18 @@ const fs = require('fs')
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
+exports.checkID = (req, res, next, val) => {
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status: 'failed',
+      message: 'Invalid ID'
+    });
+  }
+  next();
+};
+
+
+
 // 2A) TOURS CONTROLLERS
 exports.getAllTours = (request, response) => {
   response.status(200).json({
@@ -20,12 +32,6 @@ exports.getOneTour = (request, response) => {
   // this will create an array which only contains the element if the comparison ends up being true
   const id = request.params.id * 1;
   const tour = tours.find(ele => ele.id === id);
-
-  if (!tour) {
-    return response.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID'})
-  }
 
   response.status(200).json({
     status: 'success',
@@ -55,12 +61,6 @@ exports.createTour = (request, response) => {
 }
 
 exports.updateTour = (request, response) => {
-  if (request.params.id * 1 > tours.length) {
-    return response.status(404).json({
-      status: 'failed',
-      message: 'Invalid ID'
-    });
-  }
   response.status(200).json({
     status: 'success',
     data: {
@@ -70,12 +70,6 @@ exports.updateTour = (request, response) => {
 }
 
 exports.deleteTour = (request, response) => {
-  if (request.params.id * 1 > tours.length) {
-    return response.status(404).json({
-      status: 'failed',
-      message: 'Invalid ID'
-    });
-  }
   response.status(204).json({
     status: 'success',
     data: null
