@@ -1,16 +1,34 @@
 const fs = require('fs')
 const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
 
-// creating middleware: a function that can modify the incoming request data; added to request object
+// creating middleware: a function that can modify the incoming request data; added to request object; in between the request and response; returns a function
+
+// 1) MIDDLEWARES
+app.use(morgan('dev'));
+
 app.use(express.json());
+
+
+app.use((request, response, next) => {
+  console.log('Hello from the middleware!')
+  // NEVER FORGET TO USE NEXT
+  next();
+})
+
+app.use((request, response, next) => {
+  request.requestTime = new Date().toISOString();
+  next();
+})
 
 const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`));
 
 const getAllTours = (request, response) => {
   response.status(200).json({
     status: 'success',
+    requestedAt: request.requestTime,
     results: tours.length,
     data: {
       tours //variable tours
@@ -85,11 +103,42 @@ const deleteTour = (request, response) => {
   })
 }
 
-// app.get('/api/v1/tours', getAllTours);
-// app.get('/api/v1/tours/:id', getOneTour);
-// app.post('/api/v1/tours', createTour);
-// app.patch('/api/v1/tours/:id', updateTour)
-// app.delete('/api/v1/tours/:id', deleteTour)
+
+// USER FUNCTIONS
+const getAllUsers = (request, response) => {
+  response(500).json({
+    status: 'error',
+    message: 'This route is not yet defined'
+  })
+}
+
+const getOneUser = (request, response) => {
+  response(500).json({
+    status: 'error',
+    message: 'This route is not yet defined'
+  })
+}
+
+const createUser = (request, response) => {
+  response(500).json({
+    status: 'error',
+    message: 'This route is not yet defined'
+  })
+}
+
+const updateUser = (request, response) => {
+  response(500).json({
+    status: 'error',
+    message: 'This route is not yet defined'
+  })
+}
+
+const deleteUser = (request, response) => {
+  response(500).json({
+    status: 'error',
+    message: 'This route is not yet defined'
+  })
+}
 
 app.route('/api/v1/tours')
 .get(getAllTours)
@@ -100,7 +149,17 @@ app.route('/api/v1/tours/:id')
 .patch(updateTour)
 .delete(deleteTour)
 
+app.route('/api/v1/users')
+.get(getAllUsers)
+.post(createUser)
+
+api.route('/api/v1/users/:id')
+.get(getOneUser)
+.patch(updateUser)
+.delete(deleteUser)
+
+
 const port = 3000;
 app.listen(port, () => {
-  console.log(`App running on${port}`)
+  console.log(`App running on port ${port}`)
 });
