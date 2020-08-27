@@ -13,7 +13,15 @@ exports.checkID = (req, res, next, val) => {
   next();
 };
 
-
+exports.checkBody = (req, res, next) => {
+  if (!req.body.name || !req.body.price) {
+    return res.status(400).json({
+      status: 'failed',
+      message: 'Invalid input'
+    })
+  }
+  next();
+}
 
 // 2A) TOURS CONTROLLERS
 exports.getAllTours = (request, response) => {
