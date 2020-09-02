@@ -9,9 +9,13 @@ const app = express();
 // creating middleware: a function that can modify the incoming request data; added to request object; in between the request and response; returns a function
 
 // 1) MIDDLEWARES
-app.use(morgan('dev'));
+
+if(process.env.NODE_ENV === 'development'){
+  app.use(morgan('dev'));
+}
 
 app.use(express.json());
+app.use(express.static(`${__dirname}/public`))
 
 
 app.use((request, response, next) => {
