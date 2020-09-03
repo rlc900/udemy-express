@@ -2,52 +2,61 @@ const Tour = require('./../models/tourModel');
 
 // const tours = JSON.parse(fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
-exports.checkBody = (req, res, next) => {
-  if (!req.body.name || !req.body.price) {
-    return res.status(400).json({
-      status: 'failed',
-      message: 'Invalid input'
+// 2A) TOURS CONTROLLERS
+exports.getAllTours = async (request, response) => {
+  try {
+    const tours = await Tour.find()
+
+    response.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours //variable tours
+      }
+    })
+  } catch (err) {
+    response.status(404).json({
+      status: 'fail',
+      message: err
     })
   }
-  next();
-}
-
-// 2A) TOURS CONTROLLERS
-exports.getAllTours = (request, response) => {
-  response.status(200).json({
-    status: 'success',
-    requestedAt: request.requestTime,
-    // results: tours.length,
-    // data: {
-    //   tours //variable tours
-    // }
-  })
 };
 
-exports.getOneTour = (request, response) => {
-  // console.log(request.params);
+exports.getOneTour = async (request, response) => {
   // this will create an array which only contains the element if the comparison ends up being true
-  const id = request.params.id * 1;
-  const tour = tours.find(ele => ele.id === id);
+  try {
+    const tour = await Tour.findById(request.params.id);
+    response.status(200).json({
+      status: 'success',
+      data: {
+        tour //variable tours
+      }
+    });
+  } catch (err) {
+    response.status(404).json({
+      status: 'fail',
+      message: err
+    })
+  }
+};
 
-  // response.status(200).json({
-  //   status: 'success',
-  //   // results: tours.length,
-  //   data: {
-  //     tour //variable tours
-  //   }
-  // });
-}
+exports.createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body)
 
-exports.createTour = (request, response) => {
-  // console.log(request.body);
-  response.status(201).json({
-    status: 'success',
-    // data: {
-    //   tour: newTour
-    // }
-  });
-}
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Invalid data sent!'
+    })
+  }
+};
 
 exports.updateTour = (request, response) => {
   response.status(200).json({
@@ -55,12 +64,12 @@ exports.updateTour = (request, response) => {
     data: {
       tour: 'Updated tour here...'
     }
-  })
-}
+  });
+};
 
 exports.deleteTour = (request, response) => {
   response.status(204).json({
     status: 'success',
     data: null
-  })
-}
+  });
+};
